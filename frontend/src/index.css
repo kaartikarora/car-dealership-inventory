@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Design tokens: every colour and font in the UI comes from here. */
+@theme {
+  --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0f172a;
+  --color-ink-soft: #334155;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-canvas: #f5f6f8;
+  --color-surface: #ffffff;
+
+  --color-brand: #f59e0b;
+  --color-brand-strong: #d97706;
+
+  --color-ok: #059669;
+  --color-warn: #d97706;
+  --color-danger: #dc2626;
+}
+
+body {
+  @apply bg-canvas text-ink font-sans antialiased;
+}
