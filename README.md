@@ -21,6 +21,7 @@ Customers sign up, browse the showroom, search and filter it, and buy cars. Admi
 - [Concurrency: selling the last car exactly once](#concurrency-selling-the-last-car-exactly-once)
 - [Security](#security)
 - [Testing and the TDD workflow](#testing-and-the-tdd-workflow)
+- [My AI Usage](#my-ai-usage)
 - [Screenshots](#screenshots)
 - [Deployment](#deployment)
 - [Known limitations and future work](#known-limitations-and-future-work)
@@ -398,6 +399,30 @@ The frontend followed the same pattern for the API client, auth pages, showroom 
 **Bugs the process caught**
 - Search for `%` returned every car. A test exposed that Prisma doesn't escape LIKE wildcards, and the fix escapes them.
 - The *Add vehicle* dialog's title was invisible because it inherited white text from the dark header. This was found while capturing the screenshots below.
+
+---
+
+## My AI Usage
+
+### Tools used
+
+* Claude (Anthropic) via Claude Code. No other AI tools were used during this build.
+
+### How AI was used
+
+* **Planning & Architecture:** I led the system design and project roadmap. I used Claude to map out technical trade-offs across framework, database, ORM, and auth options, which helped quickly validate my final stack decisions and module map.
+* **Building & Implementation:** I engineered the core application logic and directed the day-long build. I utilized Claude as an interactive pair-programmer to accelerate boilerplate generation, scaffold test suites for my test-first (TDD) approach, and execute the feature specifications I designed.
+* **Debugging & Edge Cases:** I drove the testing strategy and used Claude as a technical sounding board. When I encountered complex issues—such as unescaped `LIKE` wildcards in Prisma, a duplicate-email race condition that risked a 500 error, and inherited CSS bugs—Claude helped me efficiently isolate the root causes and validate my fixes.
+* **Documentation:** I outlined the core project documentation (`README.md`, `SECURITY.md`) and used Claude to refine the technical writing, structure the `TEST_REPORT.md` directly from my test outputs, and automate Playwright screenshot generation.
+* **Commits:** To maintain transparency about using AI as a development force-multiplier, I included a `Co-authored-by: Claude` trailer on the commits where Claude assisted with code generation or troubleshooting.
+
+### My role
+
+I acted as the lead developer and architect. I owned all system design decisions, defined the security constraints, and thoroughly reviewed every line of code and testing logic before integration. I take full responsibility for the final build, the stack trade-offs, and ensuring the implementation strictly adhered to the project brief.
+
+### Reflection
+
+*(Write this in your own words. A good angle is discussing how managing an AI assistant accelerated your workflow and handled the boilerplate, allowing you to focus your energy on high-level architecture, strict code review, and critical path logic.)*
 
 ---
 
