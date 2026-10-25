@@ -1,0 +1,12 @@
+// Prisma 7 client, generated as CommonJS so Jest (ts-jest) can load it.
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = ""
+}
+
+// The connection URL lives in prisma.config.ts (read from DATABASE_URL).
+datasource db {
+  provider = "postgresql"
+}
