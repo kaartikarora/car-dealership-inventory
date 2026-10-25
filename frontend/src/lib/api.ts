@@ -8,14 +8,16 @@ interface ErrorBody {
 
 // Every failed request becomes an ApiError, so components handle one error type.
 export class ApiError extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly code: string,
-    message: string,
-    public readonly fieldErrors: Record<string, string> = {},
-  ) {
+  readonly status: number;
+  readonly code: string;
+  readonly fieldErrors: Record<string, string>;
+
+  constructor(status: number, code: string, message: string, fieldErrors: Record<string, string> = {}) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+    this.fieldErrors = fieldErrors;
   }
 }
 

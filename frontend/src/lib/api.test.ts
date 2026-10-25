@@ -23,7 +23,7 @@ describe('api client', () => {
         HttpResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Invalid request', details: [{ field: 'price', message: 'Too low' }] } }, { status: 400 }),
       ),
     );
-    const err = await api.post('/fail', {}).catch((e) => e);
+    const err = await api.post<never>('/fail', {}).catch((e: unknown) => e as ApiError);
     expect(err).toBeInstanceOf(ApiError);
     expect(err).toMatchObject({ status: 400, code: 'VALIDATION_ERROR', message: 'Invalid request' });
     expect(err.fieldErrors).toEqual({ price: 'Too low' });
