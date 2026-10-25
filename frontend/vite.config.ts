@@ -10,7 +10,13 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: false,
-    env: { VITE_API_URL: 'http://api.test/api' },
+    env: {
+      VITE_API_URL: 'http://api.test/api',
+      VITE_DEMO_ADMIN_EMAIL: 'admin@demo.test',
+      VITE_DEMO_ADMIN_PASSWORD: 'demo-admin-pass',
+      VITE_DEMO_CUSTOMER_EMAIL: 'customer@demo.test',
+      VITE_DEMO_CUSTOMER_PASSWORD: 'demo-customer-pass',
+    },
     coverage: {
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/main.tsx', 'src/test/**', 'src/**/*.test.{ts,tsx}'],
