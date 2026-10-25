@@ -16,7 +16,7 @@ function renderAsAdmin() {
 describe('admin inventory management', () => {
   it('adds a vehicle through the form', async () => {
     let body: unknown;
-    server.use(http.post(`${API}/vehicles`, async ({ request }) => { body = await request.json(); return HttpResponse.json(makeVehicle({ id: 'new' }), { status: 201 }); }));
+    server.use(http.post(`${API}/vehicles`, async ({ request }) => { body = await request.json(); return HttpResponse.json(makeVehicle({ id: 'new', make: 'Kia', model: 'Seltos' }), { status: 201 }); }));
     renderAsAdmin();
     await userEvent.click(await screen.findByRole('button', { name: /add vehicle/i }));
     const dialog = screen.getByRole('dialog', { name: /add a vehicle/i });
