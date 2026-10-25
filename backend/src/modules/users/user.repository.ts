@@ -1,4 +1,6 @@
 import { PrismaClient } from '../../generated/prisma/client';
+import { isUniqueViolation } from '../../db/prismaErrors';
+import { ConflictError } from '../../shared/errors';
 import { NewUser, User } from './user.types';
 
 export interface UserRepository {
@@ -14,7 +16,12 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   // Role is not accepted here at all: every self-registered account is a USER.
-  create(user: NewUser): Promise<User> {
-    return this.prisma.user.create({ data: { ...user, role: 'USER' } });
+  async create(user: NewUser): Promise<User> {
+    try {
+      return await this.prisma.user.create({ data: { ...user, role: 'USER' } });
+    } catch (err) {
+      if (isUniqueViolation(err)) throw new ConflictError('EMAIL_TAKEN', 'An account with this email already exists');
+      throw err;
+    }
   }
 }
