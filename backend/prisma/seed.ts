@@ -38,7 +38,7 @@ async function main() {
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminEmail || !adminPassword) throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD before seeding');
 
-  await upsertUser('Showroom Admin', adminEmail, adminPassword, 'ADMIN');
+  await upsertUser('Admin', adminEmail, adminPassword, 'ADMIN');
   if (process.env.DEMO_USER_EMAIL && process.env.DEMO_USER_PASSWORD) {
     await upsertUser('Demo Customer', process.env.DEMO_USER_EMAIL, process.env.DEMO_USER_PASSWORD, 'USER');
   }
