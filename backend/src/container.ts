@@ -6,6 +6,10 @@ import { createLoginRateLimiter } from './middleware/rateLimit';
 import { AuthController } from './modules/auth/auth.controller';
 import { authRoutes } from './modules/auth/auth.routes';
 import { AuthService } from './modules/auth/auth.service';
+import { InventoryController } from './modules/inventory/inventory.controller';
+import { PrismaInventoryRepository } from './modules/inventory/inventory.repository';
+import { inventoryRoutes } from './modules/inventory/inventory.routes';
+import { InventoryService } from './modules/inventory/inventory.service';
 import { PrismaUserRepository } from './modules/users/user.repository';
 import { VehicleController } from './modules/vehicles/vehicle.controller';
 import { PrismaVehicleRepository } from './modules/vehicles/vehicle.repository';
@@ -23,7 +27,9 @@ export function buildApp(env: Env) {
   const requireAuth = authenticate(tokens);
 
   const authService = new AuthService(new PrismaUserRepository(prisma), hasher, tokens);
-  const vehicleService = new VehicleService(new PrismaVehicleRepository(prisma));
+  const vehicleRepository = new PrismaVehicleRepository(prisma);
+  const vehicleService = new VehicleService(vehicleRepository);
+  const inventoryService = new InventoryService(new PrismaInventoryRepository(prisma), vehicleRepository);
 
   const app = createApp({
     corsOrigin: env.CORS_ORIGIN,
@@ -32,7 +38,10 @@ export function buildApp(env: Env) {
         new AuthController(authService),
         createLoginRateLimiter({ limit: env.LOGIN_RATE_LIMIT, windowMs: env.LOGIN_RATE_WINDOW_MS }),
       ),
-      '/api/vehicles': vehicleRoutes(new VehicleController(vehicleService), requireAuth),
+      '/api/vehicles': [
+        inventoryRoutes(new InventoryController(inventoryService), requireAuth),
+        vehicleRoutes(new VehicleController(vehicleService), requireAuth),
+      ],
     },
   });
   return { app, prisma, tokens };

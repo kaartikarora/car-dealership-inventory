@@ -5,7 +5,7 @@ import { errorHandler, notFound } from './middleware/errorHandler';
 
 export interface AppDeps {
   corsOrigin: string;
-  routers?: Record<string, Router>;
+  routers?: Record<string, Router | Router[]>;
 }
 
 // Builds the HTTP layer only. Feature routers are created in container.ts and passed in,
@@ -22,7 +22,7 @@ export function createApp({ corsOrigin, routers = {} }: AppDeps): Express {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
-  for (const [path, router] of Object.entries(routers)) app.use(path, router);
+  for (const [path, router] of Object.entries(routers)) app.use(path, ...[router].flat());
 
   app.use(notFound);
   app.use(errorHandler);
