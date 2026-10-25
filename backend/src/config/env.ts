@@ -10,6 +10,8 @@ const schema = z.object({
   JWT_EXPIRES_IN: z.string().default('1d'),
   BCRYPT_COST: z.coerce.number().int().min(4).max(15).default(10),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  LOGIN_RATE_LIMIT: z.coerce.number().int().positive().default(10),
+  LOGIN_RATE_WINDOW_MS: z.coerce.number().int().positive().default(15 * 60 * 1000),
 });
 
 export type Env = z.infer<typeof schema>;

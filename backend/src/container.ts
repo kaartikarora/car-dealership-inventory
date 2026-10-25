@@ -1,6 +1,7 @@
 import { createApp } from './app';
 import { Env } from './config/env';
 import { createPrismaClient } from './db/prisma';
+import { createLoginRateLimiter } from './middleware/rateLimit';
 import { AuthController } from './modules/auth/auth.controller';
 import { authRoutes } from './modules/auth/auth.routes';
 import { AuthService } from './modules/auth/auth.service';
@@ -19,7 +20,10 @@ export function buildApp(env: Env) {
   const app = createApp({
     corsOrigin: env.CORS_ORIGIN,
     routers: {
-      '/api/auth': authRoutes(new AuthController(authService)),
+      '/api/auth': authRoutes(
+        new AuthController(authService),
+        createLoginRateLimiter({ limit: env.LOGIN_RATE_LIMIT, windowMs: env.LOGIN_RATE_WINDOW_MS }),
+      ),
     },
   });
   return { app, prisma, tokens };
