@@ -21,3 +21,16 @@ export interface VehicleInput {
 }
 
 export type VehicleUpdate = Partial<VehicleInput>;
+
+export type VehicleSort = 'newest' | 'price_asc' | 'price_desc';
+
+export interface VehicleFilters {
+  q?: string;
+  make?: string;
+  model?: string;
+  category?: Category;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  sort?: VehicleSort;
+}

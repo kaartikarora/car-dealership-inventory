@@ -27,3 +27,22 @@ export const updateVehicleSchema = createVehicleSchema
   .partial()
   .extend({ quantity: quantity.optional() })
   .refine((body) => Object.keys(body).length > 0, 'Provide at least one field to update');
+
+const searchText = z.string().trim().min(1).max(60).optional();
+const money = z.coerce.number().nonnegative().optional();
+
+export const searchVehicleSchema = z
+  .object({
+    q: searchText,
+    make: searchText,
+    model: searchText,
+    category: z.enum(Category).optional(),
+    minPrice: money,
+    maxPrice: money,
+    inStock: z.enum(['true', 'false']).transform((v) => v === 'true').optional(),
+    sort: z.enum(['newest', 'price_asc', 'price_desc']).optional(),
+  })
+  .refine((f) => f.minPrice === undefined || f.maxPrice === undefined || f.minPrice <= f.maxPrice, {
+    message: 'minPrice cannot be greater than maxPrice',
+    path: ['minPrice'],
+  });

@@ -1,9 +1,10 @@
-import { PrismaClient } from '../../generated/prisma/client';
+import { Prisma, PrismaClient } from '../../generated/prisma/client';
 import { isRecordNotFound } from '../../db/prismaErrors';
-import { Vehicle, VehicleInput, VehicleUpdate } from './vehicle.types';
+import { Vehicle, VehicleFilters, VehicleInput, VehicleSort, VehicleUpdate } from './vehicle.types';
 
 export interface VehicleRepository {
   list(): Promise<Vehicle[]>;
+  search(filters: VehicleFilters): Promise<Vehicle[]>;
   findById(id: string): Promise<Vehicle | null>;
   create(input: VehicleInput): Promise<Vehicle>;
   update(id: string, changes: VehicleUpdate): Promise<Vehicle | null>;
@@ -12,6 +13,17 @@ export interface VehicleRepository {
 
 type VehicleRow = Omit<Vehicle, 'price'> & { price: { toNumber(): number } };
 
+const ORDER: Record<VehicleSort, Prisma.VehicleOrderByWithRelationInput> = {
+  newest: { createdAt: 'desc' },
+  price_asc: { price: 'asc' },
+  price_desc: { price: 'desc' },
+};
+
+// Case-insensitive substring match. Prisma binds the value as a parameter (no SQL injection),
+// but does not escape LIKE wildcards, so "%" or "_" typed by a user would match everything.
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (c) => `\\${c}`);
+const like = (value: string) => ({ contains: escapeLike(value), mode: 'insensitive' as const });
+
 export const toVehicle = (row: VehicleRow): Vehicle => ({ ...row, price: row.price.toNumber() });
 
 export class PrismaVehicleRepository implements VehicleRepository {
@@ -19,6 +31,19 @@ export class PrismaVehicleRepository implements VehicleRepository {
 
   async list(): Promise<Vehicle[]> {
     const rows = await this.prisma.vehicle.findMany({ orderBy: { createdAt: 'desc' } });
+    return rows.map(toVehicle);
+  }
+
+  async search({ q, make, model, category, minPrice, maxPrice, inStock, sort = 'newest' }: VehicleFilters): Promise<Vehicle[]> {
+    const where: Prisma.VehicleWhereInput = {
+      ...(q && { OR: [{ make: like(q) }, { model: like(q) }] }),
+      ...(make && { make: like(make) }),
+      ...(model && { model: like(model) }),
+      ...(category && { category }),
+      ...((minPrice !== undefined || maxPrice !== undefined) && { price: { gte: minPrice, lte: maxPrice } }),
+      ...(inStock && { quantity: { gt: 0 } }),
+    };
+    const rows = await this.prisma.vehicle.findMany({ where, orderBy: ORDER[sort] });
     return rows.map(toVehicle);
   }
 

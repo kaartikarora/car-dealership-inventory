@@ -10,6 +10,10 @@ export class VehicleController {
     res.json(await this.vehicles.list());
   };
 
+  search = async (req: Request, res: Response) => {
+    res.json(await this.vehicles.search(req.query as never));
+  };
+
   get = async (req: Request<IdParams>, res: Response) => {
     res.json(await this.vehicles.get(req.params.id));
   };

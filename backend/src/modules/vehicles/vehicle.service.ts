@@ -1,12 +1,16 @@
 import { NotFoundError } from '../../shared/errors';
 import { VehicleRepository } from './vehicle.repository';
-import { Vehicle, VehicleInput, VehicleUpdate } from './vehicle.types';
+import { Vehicle, VehicleFilters, VehicleInput, VehicleUpdate } from './vehicle.types';
 
 export class VehicleService {
   constructor(private readonly vehicles: VehicleRepository) {}
 
   list(): Promise<Vehicle[]> {
     return this.vehicles.list();
+  }
+
+  search(filters: VehicleFilters): Promise<Vehicle[]> {
+    return this.vehicles.search(filters);
   }
 
   async get(id: string): Promise<Vehicle> {
